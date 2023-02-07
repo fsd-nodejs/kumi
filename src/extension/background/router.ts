@@ -1,10 +1,12 @@
 import DappController from './controller/dapp.controller'
 import ExampleController from './controller/example.controller'
+import WalletController from './controller/wallet.controller'
 import { KoaContext } from './koa-ts'
 
 const routers = {
   ...ExampleController,
   ...DappController,
+  ...WalletController,
 }
 
 export type IRouters = keyof typeof routers

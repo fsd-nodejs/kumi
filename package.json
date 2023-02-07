@@ -15,6 +15,8 @@
     "@ant-design/icons": "^4.7.0",
     "@ant-design/pro-components": "^2.0.1",
     "@deficonnect/utils": "^2.0.3",
+    "@polkadot/ui-keyring": "^2.11.1",
+    "@polkadot/util-crypto": "^10.3.1",
     "@umijs/max": "^4.0.47",
     "@walletconnect/utils": "^1.8.0",
     "ahooks": "^3.7.4",

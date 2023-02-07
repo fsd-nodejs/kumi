@@ -1,8 +1,7 @@
 import { PageContainer } from '@ant-design/pro-components'
 import { useModel } from '@umijs/max'
 import { useRequest } from 'ahooks'
-import { Input } from 'antd'
-import { useState } from 'react'
+import { Button, Form, Input, Typography, message } from 'antd'
 
 import { trim } from '@/utils/format'
 
@@ -12,11 +11,16 @@ import Guide from '@/components/Guide'
 
 import styles from './index.less'
 
+interface FormFields {
+  username: string
+}
+
 const HomePage: React.FC = () => {
   const { name } = useModel('global')
-  const [state, setState] = useState('')
 
-  const { run, error, data, loading } = useRequest(
+  const [form] = Form.useForm<FormFields>()
+
+  const { run, data } = useRequest(
     async (username: string) => {
       return rpcClient.sendRequest({
         method: 'example_queryUserInfo',
@@ -27,32 +31,62 @@ const HomePage: React.FC = () => {
         ],
       })
     },
-    { manual: true },
+    {
+      manual: true,
+      onError: (e) => {
+        message.error(e.message)
+      },
+    },
   )
+
+  const { run: runCreateSeed, data: accountData } = useRequest(
+    async () => {
+      return rpcClient.sendRequest({
+        method: 'wallet_createSeed',
+      })
+    },
+    {
+      manual: true,
+      onError: (e) => {
+        message.error(e.message)
+      },
+    },
+  )
+
+  const onFinished = (values: FormFields) => {
+    const { username } = values
+    run(username)
+  }
+
   return (
     <PageContainer ghost>
       <div className={styles.container}>
         <Guide name={trim(name)} />
         <div>
-          <Input
-            onChange={(e) => setState(e.target.value)}
-            value={state}
-            placeholder="Please enter username"
-            style={{ width: 240, marginRight: 16 }}
-          />
-          <button disabled={loading} type="button" onClick={() => run(state)}>
-            {loading ? 'Loading' : 'Edit'}
-          </button>
-          {error && <>{error.message}</>}
-          {data && (
-            <div>
-              username: {data.username}
-              <br />
-              age: {data.age}
-              <br />
-              school: {data.school}
-            </div>
-          )}
+          <Form form={form} onFinish={onFinished} style={{ maxWidth: 600 }}>
+            <Form.Item label="Your name" name="username">
+              <Input placeholder="input placeholders" />
+            </Form.Item>
+            <Form.Item>
+              <Button type="primary" htmlType="submit">
+                Submit
+              </Button>
+              <Button onClick={runCreateSeed}>Create new account</Button>
+            </Form.Item>
+          </Form>
+          <Typography>
+            <Typography.Paragraph>
+              Username: {data?.username}
+            </Typography.Paragraph>
+            <Typography.Paragraph>Age: {data?.age}</Typography.Paragraph>
+            <Typography.Paragraph>School: {data?.school}</Typography.Paragraph>
+            <Typography.Paragraph>
+              Seed: {accountData?.seed}
+            </Typography.Paragraph>
+            {/* <Typography.Paragraph>
+              Address: {accountData?.address}
+            </Typography.Paragraph> */}
+          </Typography>
         </div>
       </div>
     </PageContainer>

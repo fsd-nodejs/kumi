@@ -1,3 +1,5 @@
+import { cryptoWaitReady } from '@polkadot/util-crypto'
+
 import { createServer } from './app/server'
 import Job from './job'
 import Koa from './koa-ts'
@@ -26,6 +28,19 @@ export const server = createServer({
   },
   beforeStart: async () => {
     await Job.startAllJobs()
+
+    // initial setup
+    cryptoWaitReady()
+      .then((): void => {
+        console.log('crypto initialized')
+
+        // load all the keyring data
+
+        console.log('initialization completed')
+      })
+      .catch((error): void => {
+        console.error('initialization failed', error)
+      })
   },
   afterStart: async () => {},
 })
