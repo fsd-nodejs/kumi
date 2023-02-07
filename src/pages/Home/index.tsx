@@ -41,8 +41,10 @@ const HomePage: React.FC = () => {
 
   const { run: runCreateSeed, data: accountData } = useRequest(
     async () => {
+      const seed = form.getFieldValue('seed') as string
       return rpcClient.sendRequest({
         method: 'wallet_createSeed',
+        params: [{ seed: seed }],
       })
     },
     {
@@ -67,11 +69,16 @@ const HomePage: React.FC = () => {
             <Form.Item label="Your name" name="username">
               <Input placeholder="input placeholders" />
             </Form.Item>
+            <Form.Item label="Your seed" name="seed">
+              <Input placeholder="input placeholders" />
+            </Form.Item>
             <Form.Item>
               <Button type="primary" htmlType="submit">
                 Submit
               </Button>
-              <Button onClick={runCreateSeed}>Create new account</Button>
+              <Button style={{ marginLeft: 8 }} onClick={runCreateSeed}>
+                Create new account
+              </Button>
             </Form.Item>
           </Form>
           <Typography>
@@ -83,9 +90,9 @@ const HomePage: React.FC = () => {
             <Typography.Paragraph>
               Seed: {accountData?.seed}
             </Typography.Paragraph>
-            {/* <Typography.Paragraph>
+            <Typography.Paragraph>
               Address: {accountData?.address}
-            </Typography.Paragraph> */}
+            </Typography.Paragraph>
           </Typography>
         </div>
       </div>

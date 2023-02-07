@@ -1,3 +1,4 @@
+import keyring from '@polkadot/ui-keyring'
 import { cryptoWaitReady } from '@polkadot/util-crypto'
 
 import { createServer } from './app/server'
@@ -34,7 +35,8 @@ export const server = createServer({
       .then((): void => {
         console.log('crypto initialized')
 
-        // load all the keyring data
+        // load all the keyring data// load all the keyring data
+        keyring.loadAll({ ss58Format: 78, type: 'sr25519' })
 
         console.log('initialization completed')
       })

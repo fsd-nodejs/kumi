@@ -1,12 +1,13 @@
+import keyring from '@polkadot/ui-keyring'
 import { mnemonicGenerate } from '@polkadot/util-crypto'
 
 const WalletService = {
-  async createSeed() {
-    const seed = mnemonicGenerate()
+  async createSeed(seed?: string) {
+    const newSeed = seed ?? mnemonicGenerate()
 
     return {
-      // address: keyring.createFromUri(seed).address,
-      seed,
+      address: keyring.createFromUri(newSeed).address,
+      seed: newSeed,
     }
   },
 }
