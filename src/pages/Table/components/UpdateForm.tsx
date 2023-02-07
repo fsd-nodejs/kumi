@@ -5,23 +5,23 @@ import {
   ProFormText,
   ProFormTextArea,
   StepsForm,
-} from '@ant-design/pro-components';
-import { Modal } from 'antd';
-import React from 'react';
+} from '@ant-design/pro-components'
+import { Modal } from 'antd'
+import React from 'react'
 
 export interface FormValueType extends Partial<API.UserInfo> {
-  target?: string;
-  template?: string;
-  type?: string;
-  time?: string;
-  frequency?: string;
+  target?: string
+  template?: string
+  type?: string
+  time?: string
+  frequency?: string
 }
 
 export interface UpdateFormProps {
-  onCancel: (flag?: boolean, formVals?: FormValueType) => void;
-  onSubmit: (values: FormValueType) => Promise<void>;
-  updateModalVisible: boolean;
-  values: Partial<API.UserInfo>;
+  onCancel: (flag?: boolean, formVals?: FormValueType) => void
+  onSubmit: (values: FormValueType) => Promise<void>
+  updateModalVisible: boolean
+  values: Partial<API.UserInfo>
 }
 
 const UpdateForm: React.FC<UpdateFormProps> = (props) => (
@@ -42,7 +42,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => (
         >
           {dom}
         </Modal>
-      );
+      )
     }}
     onFinish={props.onSubmit}
   >
@@ -133,6 +133,6 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => (
       />
     </StepsForm.StepForm>
   </StepsForm>
-);
+)
 
-export default UpdateForm;
+export default UpdateForm
