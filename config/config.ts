@@ -35,6 +35,14 @@ export default defineConfig({
     jsStrategy: 'depPerChunk',
     jsStrategyOptions: {},
   },
+  polyfill: {
+    imports: ['core-js/stable'],
+  },
+  fastRefresh: false,
+  targets: {
+    chrome: 80,
+  },
+  mfsu: false,
   chainWebpack(memo, { env }) {
     if (env !== 'development') {
       memo.devServer.hot(false)

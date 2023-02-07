@@ -16,7 +16,7 @@ const HomePage: React.FC = () => {
   const { name } = useModel('global')
   const [state, setState] = useState('')
 
-  const { run, data, loading } = useRequest(
+  const { run, error, data, loading } = useRequest(
     async (username: string) => {
       return rpcClient.sendRequest({
         method: 'example_queryUserInfo',
@@ -43,6 +43,7 @@ const HomePage: React.FC = () => {
           <button disabled={loading} type="button" onClick={() => run(state)}>
             {loading ? 'Loading' : 'Edit'}
           </button>
+          {error && <>{error.message}</>}
           {data && (
             <div>
               username: {data.username}

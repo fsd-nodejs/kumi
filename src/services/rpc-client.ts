@@ -16,6 +16,7 @@ import type {
 } from '@/extension/background/router'
 import SafeEventEmitter from '@/extension/background/utils/safe-event-emitter'
 import { isKoaMessage } from '@/extension/background/utils/types-utils'
+import { DappTransport } from '@/extension/content/connector/dapp-transport'
 
 import type { ChromeConnectPortJSON, IJsonRpcResponse } from '@/extension'
 
@@ -31,6 +32,7 @@ interface SendOptionProps {
 
 export class RpcClient extends SafeEventEmitter {
   port: chrome.runtime.Port
+  transport?: DappTransport
   private portName: ChromeConnectPortJSON
   constructor(name: ChromeConnectPortJSON) {
     super()
@@ -40,7 +42,7 @@ export class RpcClient extends SafeEventEmitter {
   }
 
   private connectServiceWorker(name: string) {
-    const port = chrome.runtime.connect({ name })
+    const port = chrome?.runtime?.connect({ name })
     port?.onDisconnect.addListener(() => {
       setTimeout(() => {
         this.connectServiceWorker(name)
@@ -49,6 +51,12 @@ export class RpcClient extends SafeEventEmitter {
     })
     this.port = port
     this.port?.onMessage.addListener(this.receiveMessageFromService)
+
+    // adapt for debug
+    if (!port) {
+      this.transport = new DappTransport()
+      this.transport.on('message', this.receiveMessageFromService)
+    }
     return port
   }
 
@@ -69,7 +77,10 @@ export class RpcClient extends SafeEventEmitter {
   private async postPortMessage<T>(msg: T): Promise<void> {
     return new Promise((resolve, reject) => {
       try {
-        this.port.postMessage(msg)
+        this.port?.postMessage(msg)
+        if (!this.port) {
+          this.transport?.send(msg as KoaMessage)
+        }
         resolve()
       } catch (e) {
         reject(e)
