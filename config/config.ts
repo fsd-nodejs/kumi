@@ -26,6 +26,10 @@ export default defineConfig({
       from: './node_modules/webextension-polyfill/dist/browser-polyfill.js',
       to: './dist/browser-polyfill.js',
     },
+    {
+      from: './node_modules/webextension-polyfill/dist/browser-polyfill.js.map',
+      to: './dist/browser-polyfill.js.map',
+    },
   ],
   jsMinifier: 'esbuild',
   jsMinifierOptions: {
@@ -71,38 +75,6 @@ export default defineConfig({
       .entry('inpage-content')
       .add('@/extension/content/inpage-content.ts')
       .end()
-
-    memo.merge({
-      optimization: {
-        splitChunks: {
-          cacheGroups: {
-            antd: {
-              name: 'antd',
-              test: (module: any) => {
-                return /antd/.test(module.context)
-              },
-              chunks: 'all',
-              enforce: true,
-              priority: 10,
-            },
-            vendor: {
-              chunks(chunk: any) {
-                return !['inpage-content', 'content-script'].includes(
-                  chunk.name,
-                )
-              },
-              name: 'vendors',
-              test({ resource }: { resource: any }) {
-                return /[\\/]node_modules[\\/]/.test(resource)
-              },
-              priority: 1,
-              enforce: true,
-              reuseExistingChunk: true,
-            },
-          },
-        },
-      },
-    })
 
     return memo
   },
