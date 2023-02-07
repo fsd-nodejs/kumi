@@ -16,16 +16,19 @@ const HomePage: React.FC = () => {
   const { name } = useModel('global')
   const [state, setState] = useState('')
 
-  const { run, data, loading } = useRequest(async (username: string) => {
-    return rpcClient.sendRequest({
-      method: 'example_queryUserInfo',
-      params: [
-        {
-          username,
-        },
-      ],
-    })
-  })
+  const { run, data, loading } = useRequest(
+    async (username: string) => {
+      return rpcClient.sendRequest({
+        method: 'example_queryUserInfo',
+        params: [
+          {
+            username,
+          },
+        ],
+      })
+    },
+    { manual: true },
+  )
   return (
     <PageContainer ghost>
       <div className={styles.container}>
