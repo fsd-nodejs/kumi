@@ -66,7 +66,7 @@ export function isExtensionClientPort(port: chrome.runtime.Port): boolean {
 }
 
 export function roleOfOriginUrl(origin: string): ClientRole {
-  if (origin === location.origin) {
+  if (origin === location.origin || origin === 'http://localhost:8000') {
     return 'popup'
   } else if (origin === KOA_MESSAGE_MOBILE_ORIGIN) {
     return 'mobile'
