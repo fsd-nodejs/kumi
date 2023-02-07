@@ -1,4 +1,5 @@
 {
+  "version": "1.0.0",
   "private": true,
   "author": "Vern Zhang",
   "scripts": {
@@ -13,17 +14,32 @@
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
     "@ant-design/pro-components": "^2.0.1",
+    "@deficonnect/utils": "^2.0.3",
     "@umijs/max": "^4.0.47",
-    "antd": "^5.0.0"
+    "@walletconnect/utils": "^1.8.0",
+    "ahooks": "^3.7.4",
+    "antd": "^5.0.0",
+    "dexie": "^3.2.3",
+    "koa-compose": "^4.1.0",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@deficonnect/types": "^2.0.3",
+    "@trivago/prettier-plugin-sort-imports": "^4.0.0",
+    "@types/chrome": "^0.0.212",
+    "@types/generate-json-webpack-plugin": "^0.3.4",
+    "@types/koa-compose": "^3.2.5",
+    "@types/lodash": "^4.14.191",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
+    "@types/uuid": "^9.0.0",
+    "generate-json-webpack-plugin": "^2.0.0",
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3",
     "prettier": "^2.7.1",
     "prettier-plugin-organize-imports": "^2",
     "prettier-plugin-packagejson": "^2",
-    "typescript": "^4.1.2"
+    "typescript": "^4.1.2",
+    "webextension-polyfill": "^0.10.0"
   }
 }

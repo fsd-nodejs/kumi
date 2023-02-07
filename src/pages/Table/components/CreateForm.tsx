@@ -1,13 +1,13 @@
-import { Modal } from 'antd';
-import React, { PropsWithChildren } from 'react';
+import { Modal } from 'antd'
+import React, { PropsWithChildren } from 'react'
 
 interface CreateFormProps {
-  modalVisible: boolean;
-  onCancel: () => void;
+  modalVisible: boolean
+  onCancel: () => void
 }
 
 const CreateForm: React.FC<PropsWithChildren<CreateFormProps>> = (props) => {
-  const { modalVisible, onCancel } = props;
+  const { modalVisible, onCancel } = props
 
   return (
     <Modal
@@ -20,7 +20,7 @@ const CreateForm: React.FC<PropsWithChildren<CreateFormProps>> = (props) => {
     >
       {props.children}
     </Modal>
-  );
-};
+  )
+}
 
-export default CreateForm;
+export default CreateForm
