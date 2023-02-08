@@ -11,7 +11,6 @@ import {
   Row,
   Col,
   Card,
-  Avatar,
   Checkbox,
   Spin,
   Form,
@@ -19,8 +18,11 @@ import {
   Select,
 } from 'antd'
 import { FC, useState } from 'react'
+import { history } from 'umi'
 
 import { rpcClient } from '@/services/rpc-client'
+
+import { AccountInfo } from '@/components/AccountInfo'
 
 import styles from './index.less'
 
@@ -32,7 +34,7 @@ interface FormFields {
 
 const { Title, Paragraph, Text } = Typography
 
-const CreatePage: React.FC = () => {
+const CreatePage: FC = () => {
   const [isChecked, setIsChecked] = useState(false)
 
   const [current, setCurrent] = useState(1)
@@ -54,30 +56,22 @@ const CreatePage: React.FC = () => {
     },
   )
 
-  const AccountInfo: FC<{ name?: string }> = ({ name }) => {
-    const cName = name ?? ''
-    return (
-      <Card>
-        <Card.Meta
-          avatar={
-            <Avatar>
-              {cName.length > 2 ? cName[0].toLocaleUpperCase() : 'U'}
-            </Avatar>
-          }
-          title={cName.length > 2 ? name : '<unknown>'}
-        />
-        <Paragraph
-          copyable={{ tooltips: ['Copy address', 'Copied!'] }}
-          style={{ marginTop: 16, marginBottom: 0 }}
-        >
-          {account?.address}
-        </Paragraph>
-      </Card>
-    )
-  }
-
-  const onFinish = (values: any) => {
-    console.log('Success:', values)
+  const onFinish = async (values: FormFields) => {
+    const result = await rpcClient.sendRequest({
+      method: 'wallet_createAccount',
+      params: [
+        {
+          name: values.name.trim(),
+          password: values.password.trim(),
+          network: values.network,
+          seed: account?.seed ?? '',
+        },
+      ],
+    })
+    if (result) {
+      message.success('Create Account Success')
+      history.replace('/home')
+    }
   }
 
   const onFinishFailed = (errorInfo: any) => {
@@ -98,7 +92,7 @@ const CreatePage: React.FC = () => {
             title="Cancel"
             icon={<CloseOutlined />}
             onClick={() => {
-              history.go(-1)
+              history.replace('/home')
             }}
           ></Button>
         </Col>
@@ -106,20 +100,20 @@ const CreatePage: React.FC = () => {
       {/* Step 1 */}
       {current === 1 && (
         <Spin spinning={loading}>
-          <AccountInfo />
-          <Row style={{ marginTop: 16 }}>
+          <AccountInfo address={account?.address} />
+          <Row>
             <Paragraph>GENERATED 12-WORD MNEMONIC SEED:</Paragraph>
           </Row>
-          <Card>
+          <Card style={{ marginBottom: 16 }}>
             <Paragraph
               copyable={{ tooltips: ['Copy address', 'Copied!'] }}
-              style={{ marginBottom: 0 }}
+              style={{ marginTop: 0 }}
               type="warning"
             >
               {account?.seed}
             </Paragraph>
           </Card>
-          <Row style={{ marginTop: 16 }}>
+          <Row style={{ marginBottom: 16 }}>
             <Paragraph>
               <WarningTwoTone
                 twoToneColor="#faad14"
@@ -130,7 +124,7 @@ const CreatePage: React.FC = () => {
               it carefully to not lose your assets.
             </Paragraph>
           </Row>
-          <Row style={{ marginTop: 16 }}>
+          <Row style={{ marginBottom: 16 }}>
             <Checkbox
               checked={isChecked}
               onChange={(e) => {
@@ -140,7 +134,7 @@ const CreatePage: React.FC = () => {
               I have saved my mnemonic seed safely
             </Checkbox>
           </Row>
-          <Row style={{ marginTop: 16 }}>
+          <Row style={{ marginBottom: 16 }}>
             <Button
               disabled={!isChecked}
               style={{ width: '100%' }}
@@ -158,8 +152,8 @@ const CreatePage: React.FC = () => {
       {/* Step 2 */}
       {current === 2 && (
         <Spin spinning={loading}>
-          <AccountInfo name={name} />
-          <Row style={{ marginTop: 16 }}>
+          <AccountInfo name={name} address={account?.address} />
+          <Row style={{ marginBottom: 16 }}>
             <Form
               name="basic"
               form={form}
@@ -237,7 +231,7 @@ const CreatePage: React.FC = () => {
                 <Input.Password placeholder="Confirm your password" />
               </Form.Item>
 
-              <Row style={{ marginTop: 16 }}>
+              <Row style={{ marginBottom: 16 }}>
                 <Col flex="36px">
                   <Button
                     icon={<ArrowLeftOutlined />}
