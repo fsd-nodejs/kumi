@@ -17,14 +17,18 @@ import {
   Input,
   Select,
 } from 'antd'
-import { FC, useState } from 'react'
-import { history } from 'umi'
+import { FC, useEffect, useMemo, useState } from 'react'
+import { history, useLocation } from 'umi'
 
 import { rpcClient } from '@/services/rpc-client'
 
 import { AccountInfo } from '@/components/AccountInfo'
 
 import styles from './index.less'
+
+interface StateFields {
+  model?: string
+}
 
 interface FormFields {
   name: string
@@ -35,42 +39,74 @@ interface FormFields {
 const { Title, Paragraph, Text } = Typography
 
 const CreatePage: FC = () => {
-  const [isChecked, setIsChecked] = useState(false)
-
+  const [isEnable, setIsEnable] = useState(false)
   const [current, setCurrent] = useState(1)
+
+  const location = useLocation()
 
   const [form] = Form.useForm<FormFields>()
   const name = Form.useWatch('name', form)
 
-  const { data: account, loading } = useRequest(
-    async () => {
+  const isImport = useMemo(() => {
+    const state = location.state as StateFields
+    return state?.model === 'import'
+  }, [location.state])
+
+  const {
+    data: account,
+    loading,
+    run,
+  } = useRequest(
+    async (seed?: string) => {
       return rpcClient.sendRequest({
         method: 'wallet_createSeed',
-        params: [{}],
+        params: [{ seed }],
       })
     },
     {
+      manual: true,
+      debounceWait: 300,
+      onSuccess: () => {
+        if (isImport) {
+          setIsEnable(true)
+        }
+      },
       onError: (e) => {
+        if (isImport) {
+          setIsEnable(false)
+        }
         message.error(e.message)
       },
     },
   )
 
+  useEffect(() => {
+    const state = location.state as StateFields
+    if (state?.model !== 'import') {
+      run()
+    }
+  }, [])
+
   const onFinish = async (values: FormFields) => {
-    const result = await rpcClient.sendRequest({
-      method: 'wallet_createAccount',
-      params: [
-        {
-          name: values.name.trim(),
-          password: values.password.trim(),
-          network: values.network,
-          seed: account?.seed ?? '',
-        },
-      ],
-    })
-    if (result) {
-      message.success('Create Account Success')
-      history.replace('/home')
+    try {
+      const result = await rpcClient.sendRequest({
+        method: 'wallet_createAccount',
+        params: [
+          {
+            name: values.name.trim(),
+            password: values.password.trim(),
+            network: values.network,
+            seed: account?.seed ?? '',
+          },
+        ],
+      })
+      if (result) {
+        message.success('Create Account Success')
+        history.replace('/home')
+        return
+      }
+    } catch (error: any) {
+      message.error(error?.message)
     }
   }
 
@@ -97,8 +133,37 @@ const CreatePage: FC = () => {
           ></Button>
         </Col>
       </Row>
-      {/* Step 1 */}
-      {current === 1 && (
+      {/* Step 1 import */}
+      {current === 1 && isImport && (
+        <>
+          <AccountInfo address={account?.address} />
+          <Row>
+            <Paragraph>EXISTING 12 OR 24-WORD MNEMONIC SEED</Paragraph>
+          </Row>
+
+          <Input.TextArea
+            style={{ height: 100, marginBottom: 16 }}
+            allowClear
+            onChange={(e) => run(e.target.value)}
+          />
+
+          <Row style={{ marginBottom: 16 }}>
+            <Button
+              disabled={!isEnable}
+              style={{ width: '100%' }}
+              type="primary"
+              onClick={() => {
+                setCurrent(2)
+              }}
+            >
+              Next step
+            </Button>
+          </Row>
+        </>
+      )}
+
+      {/* Step 1 create */}
+      {current === 1 && !isImport && (
         <Spin spinning={loading}>
           <AccountInfo address={account?.address} />
           <Row>
@@ -107,7 +172,7 @@ const CreatePage: FC = () => {
           <Card style={{ marginBottom: 16 }}>
             <Paragraph
               copyable={{ tooltips: ['Copy address', 'Copied!'] }}
-              style={{ marginTop: 0 }}
+              style={{ marginBottom: 0 }}
               type="warning"
             >
               {account?.seed}
@@ -126,9 +191,9 @@ const CreatePage: FC = () => {
           </Row>
           <Row style={{ marginBottom: 16 }}>
             <Checkbox
-              checked={isChecked}
+              checked={isEnable}
               onChange={(e) => {
-                setIsChecked(e.target.checked)
+                setIsEnable(e.target.checked)
               }}
             >
               I have saved my mnemonic seed safely
@@ -136,7 +201,7 @@ const CreatePage: FC = () => {
           </Row>
           <Row style={{ marginBottom: 16 }}>
             <Button
-              disabled={!isChecked}
+              disabled={!isEnable}
               style={{ width: '100%' }}
               type="primary"
               onClick={() => {
@@ -232,14 +297,16 @@ const CreatePage: FC = () => {
               </Form.Item>
 
               <Row style={{ marginBottom: 16 }}>
-                <Col flex="36px">
-                  <Button
-                    icon={<ArrowLeftOutlined />}
-                    onClick={() => {
-                      setCurrent(1)
-                    }}
-                  ></Button>
-                </Col>
+                {!isImport && (
+                  <Col flex="36px">
+                    <Button
+                      icon={<ArrowLeftOutlined />}
+                      onClick={() => {
+                        setCurrent(1)
+                      }}
+                    ></Button>
+                  </Col>
+                )}
                 <Col flex="auto">
                   <Form.Item wrapperCol={{ span: 24 }}>
                     <Button
@@ -253,7 +320,6 @@ const CreatePage: FC = () => {
                 </Col>
               </Row>
             </Form>
-            {/* <Paragraph>GENERATED 12-WORD MNEMONIC SEED:</Paragraph> */}
           </Row>
         </Spin>
       )}

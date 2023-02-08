@@ -1,6 +1,7 @@
 import { uuid } from '@deficonnect/utils'
 import keyring from '@polkadot/ui-keyring'
 import { mnemonicGenerate } from '@polkadot/util-crypto'
+import assert from 'assert'
 
 import WalletModel from '../model/wallet.model'
 
@@ -20,6 +21,13 @@ const WalletService = {
   }) {
     const { name, network, address, keyringId } = params
 
+    const wallet = await WalletModel.wallets
+      .where('address')
+      .equals(address)
+      .first()
+
+    assert(!wallet, 'Existed same wallet')
+
     const accountId = await WalletModel.wallets.add({
       walletId: uuid(),
       name,
@@ -34,7 +42,7 @@ const WalletService = {
   },
 
   async queryAllAccount() {
-    const accounts = await WalletModel.wallets.toArray()
+    const accounts = await (await WalletModel.wallets.toArray()).reverse()
     return accounts
   },
 }

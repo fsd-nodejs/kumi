@@ -23,7 +23,7 @@ const items: MenuProps['items'] = [
     key: '2',
     label: 'Import account from pre-existing seed',
     onClick: () => {
-      history.push('/create')
+      history.push('/create', { model: 'import' })
     },
   },
 ]
@@ -51,7 +51,7 @@ const HomePage: React.FC = () => {
         </Col>
       </Row>
       <Spin spinning={loading}>
-        {!accounts && (
+        {accounts?.length === 0 && (
           <div style={{ marginTop: 60, textAlign: 'center' }}>
             <Typography.Text>
               You currently do not have any accounts. Create your first account
@@ -60,8 +60,8 @@ const HomePage: React.FC = () => {
           </div>
         )}
 
-        {accounts &&
-          accounts.map((account) => (
+        {accounts?.length !== 0 &&
+          accounts?.map((account) => (
             <AccountInfo
               key={account.walletId}
               name={account.name}

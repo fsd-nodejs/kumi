@@ -22,7 +22,8 @@ class WalletModelDB extends Dexie {
   public constructor() {
     super('wallet-model')
     this.version(1).stores({
-      wallets: '++id, &walletId',
+      wallets:
+        '++id, &walletId, name, keyringId, walletType, address, network, createTime',
     })
   }
 }

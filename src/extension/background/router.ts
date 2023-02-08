@@ -1,3 +1,4 @@
+import BalanceController from './controller/balance.controller'
 import DappController from './controller/dapp.controller'
 import ExampleController from './controller/example.controller'
 import WalletController from './controller/wallet.controller'
@@ -7,6 +8,7 @@ const routers = {
   ...ExampleController,
   ...DappController,
   ...WalletController,
+  ...BalanceController,
 }
 
 export type IRouters = keyof typeof routers

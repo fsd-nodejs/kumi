@@ -1,9 +1,12 @@
 import { mnemonicValidate } from '@polkadot/util-crypto'
 import assert from 'assert'
 
+// import BalanceService from '../service/balance.service'
 import KeyringService from '../service/keyring.service'
 import WalletService from '../service/wallet.service'
 import { KoaContext } from './../koa-ts/lib/context'
+
+// import BalanceController from './balance.controller'
 
 const WalletController = {
   async wallet_createSeed(ctx: KoaContext<[{ seed?: string }]>) {
@@ -50,6 +53,9 @@ const WalletController = {
 
   async wallet_queryAllAccount(ctx: KoaContext) {
     const accounts = await WalletService.queryAllAccount()
+    // const [account] = accounts
+    // const result = await BalanceService.queryByAddress(account.address)
+    // console.log('test', result)
     return ctx.pushResponse(accounts)
   },
 }
