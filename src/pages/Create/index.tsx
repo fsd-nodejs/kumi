@@ -233,7 +233,7 @@ const CreatePage: React.FC = () => {
                   }),
                 ]}
               >
-                <Input.Password />
+                <Input.Password placeholder="Confirm your password" />
               </Form.Item>
 
               <Row style={{ marginTop: 16 }}>
