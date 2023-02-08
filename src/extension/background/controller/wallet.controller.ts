@@ -48,7 +48,7 @@ const WalletController = {
 
     const wallet = await WalletService.getWalletById(accountId)
     if (wallet) {
-      await BalanceService.refreshBalance(wallet)
+      BalanceService.refreshBalance(wallet)
     }
 
     return ctx.pushResponse({ accountId })
@@ -67,6 +67,19 @@ const WalletController = {
     )
 
     return ctx.pushResponse(accountsWithBalance)
+  },
+
+  async wallet_deleteAccount(ctx: KoaContext<[{ address: string }]>) {
+    const { address } = ctx.params[0]
+    assert(address, 'Invalid address')
+
+    const deleted = await WalletService.deleteAccount(address)
+
+    await BalanceService.deleteBalance(address)
+
+    assert(deleted, 'Delete Account Failed')
+
+    return ctx.pushResponse(deleted)
   },
 }
 

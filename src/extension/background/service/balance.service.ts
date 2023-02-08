@@ -36,6 +36,10 @@ const BalanceService = {
     const updated = await BalanceModel.balances.put(params)
     return updated
   },
+
+  async deleteBalance(address: string) {
+    return BalanceModel.balances.where('address').equals(address).delete()
+  },
 }
 
 export default BalanceService

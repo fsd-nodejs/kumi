@@ -52,6 +52,14 @@ const WalletService = {
     const accounts = await (await WalletModel.wallets.toArray()).reverse()
     return accounts
   },
+
+  async deleteAccount(address: string) {
+    const deleted = WalletModel.wallets
+      .where('address')
+      .equals(address)
+      .delete()
+    return deleted
+  },
 }
 
 export default WalletService

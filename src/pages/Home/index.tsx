@@ -2,7 +2,7 @@ import {
   PlusOutlined,
   ReloadOutlined,
   EditOutlined,
-  EllipsisOutlined,
+  DeleteTwoTone,
 } from '@ant-design/icons'
 import { history } from '@umijs/max'
 import { useRequest } from 'ahooks'
@@ -15,6 +15,8 @@ import {
   Dropdown,
   MenuProps,
   Badge,
+  Popconfirm,
+  message,
 } from 'antd'
 import * as Mathjs from 'mathjs'
 import Numeral from 'numeral'
@@ -27,7 +29,7 @@ import styles from './index.less'
 
 const { Title } = Typography
 
-const items: MenuProps['items'] = [
+const headerMenuItems: MenuProps['items'] = [
   {
     key: '1',
     label: 'Create new account',
@@ -58,12 +60,22 @@ const formatBalance = ({
 }
 
 const HomePage: React.FC = () => {
-  const { data: accounts, loading } = useRequest(async () => {
-    return rpcClient.sendRequest({
-      method: 'wallet_queryAllAccount',
-      params: [],
-    })
-  })
+  const {
+    data: accounts,
+    loading,
+    run,
+  } = useRequest(
+    async () => {
+      return rpcClient.sendRequest({
+        method: 'wallet_queryAllAccount',
+        params: [],
+      })
+    },
+    {
+      pollingInterval: 30000,
+      pollingErrorRetryCount: 3,
+    },
+  )
 
   return (
     <div className={styles.container}>
@@ -74,7 +86,11 @@ const HomePage: React.FC = () => {
           </Title>
         </Col>
         <Col span={8} style={{ textAlign: 'right' }}>
-          <Dropdown menu={{ items }} placement="bottomRight" arrow>
+          <Dropdown
+            menu={{ items: headerMenuItems }}
+            placement="bottomRight"
+            arrow
+          >
             <Button icon={<PlusOutlined />} title="Create new account"></Button>
           </Dropdown>
         </Col>
@@ -101,17 +117,56 @@ const HomePage: React.FC = () => {
                 name={account.name}
                 address={account.address}
                 actions={[
-                  <ReloadOutlined key="refresh" />,
+                  <ReloadOutlined
+                    key="refresh"
+                    onClick={async () => {
+                      try {
+                        const result = await rpcClient.sendRequest({
+                          method: 'balance_refreshBalance',
+                          params: [{ address: account.address }],
+                        })
+                        if (result) {
+                          run()
+                          message.success('Balance refreshed')
+                        }
+                      } catch (error: any) {
+                        message.error(error.message)
+                      }
+                    }}
+                  />,
                   <EditOutlined key="edit" />,
-                  <EllipsisOutlined key="ellipsis" />,
+                  <Popconfirm
+                    key="delete"
+                    title="Forget account"
+                    description="You are about to remove the account?"
+                    okText="Yes"
+                    cancelText="Cancel"
+                    placement="topRight"
+                    onConfirm={async () => {
+                      try {
+                        const result = await rpcClient.sendRequest({
+                          method: 'wallet_deleteAccount',
+                          params: [{ address: account.address }],
+                        })
+                        if (result) {
+                          run()
+                          message.success('Forget Account Success')
+                        }
+                      } catch (error: any) {
+                        message.error(error.message)
+                      }
+                    }}
+                  >
+                    <DeleteTwoTone twoToneColor="red" />
+                  </Popconfirm>,
                 ]}
               >
                 <Row style={{ marginTop: 8 }}>
                   <Col>Balance:</Col>
                   <Col flex="auto" style={{ textAlign: 'right' }}>
                     {formatBalance({
-                      balance: account.balance?.balance ?? '',
-                      decimals: account.balance?.decimals ?? 0,
+                      balance: account.balance?.balance ?? '0',
+                      decimals: account.balance?.decimals ?? 1,
                     })}{' '}
                     {account.balance?.symbol}
                   </Col>
