@@ -5,7 +5,7 @@ import WalletService from '../service/wallet.service'
 import { KoaContext } from './../koa-ts/lib/context'
 
 const WalletController = {
-  async wallet_createSeed(ctx: KoaContext<[{ seed: string }]>) {
+  async wallet_createSeed(ctx: KoaContext<[{ seed?: string }]>) {
     const { seed } = ctx.params[0]
     if (seed) {
       assert(mnemonicValidate(seed), 'Not a valid mnemonic seed')

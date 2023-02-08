@@ -1,102 +1,37 @@
-import { PageContainer } from '@ant-design/pro-components'
-import { useModel } from '@umijs/max'
-import { useRequest } from 'ahooks'
-import { Button, Form, Input, Typography, message } from 'antd'
-
-import { trim } from '@/utils/format'
-
-import { rpcClient } from '@/services/rpc-client'
-
-import Guide from '@/components/Guide'
+import { PlusOutlined } from '@ant-design/icons'
+import { history } from '@umijs/max'
+import { Button, Typography, Row, Col } from 'antd'
 
 import styles from './index.less'
 
-interface FormFields {
-  username: string
-}
+const { Title } = Typography
 
 const HomePage: React.FC = () => {
-  const { name } = useModel('global')
-
-  const [form] = Form.useForm<FormFields>()
-
-  const { run, data } = useRequest(
-    async (username: string) => {
-      return rpcClient.sendRequest({
-        method: 'example_queryUserInfo',
-        params: [
-          {
-            username,
-          },
-        ],
-      })
-    },
-    {
-      manual: true,
-      onError: (e) => {
-        message.error(e.message)
-      },
-    },
-  )
-
-  const { run: runCreateSeed, data: accountData } = useRequest(
-    async () => {
-      const seed = form.getFieldValue('seed') as string
-      return rpcClient.sendRequest({
-        method: 'wallet_createSeed',
-        params: [{ seed: seed }],
-      })
-    },
-    {
-      manual: true,
-      onError: (e) => {
-        message.error(e.message)
-      },
-    },
-  )
-
-  const onFinished = (values: FormFields) => {
-    const { username } = values
-    run(username)
-  }
-
   return (
-    <PageContainer ghost>
-      <div className={styles.container}>
-        <Guide name={trim(name)} />
-        <div>
-          <Form form={form} onFinish={onFinished} style={{ maxWidth: 600 }}>
-            <Form.Item label="Your name" name="username">
-              <Input placeholder="input placeholders" />
-            </Form.Item>
-            <Form.Item label="Your seed" name="seed">
-              <Input placeholder="input placeholders" />
-            </Form.Item>
-            <Form.Item>
-              <Button type="primary" htmlType="submit">
-                Submit
-              </Button>
-              <Button style={{ marginLeft: 8 }} onClick={runCreateSeed}>
-                Create new account
-              </Button>
-            </Form.Item>
-          </Form>
-          <Typography>
-            <Typography.Paragraph>
-              Username: {data?.username}
-            </Typography.Paragraph>
-            <Typography.Paragraph>Age: {data?.age}</Typography.Paragraph>
-            <Typography.Paragraph>School: {data?.school}</Typography.Paragraph>
-            <Typography.Paragraph>
-              Seed: {accountData?.seed}
-            </Typography.Paragraph>
-            <Typography.Paragraph>
-              Address: {accountData?.address}
-            </Typography.Paragraph>
-          </Typography>
-        </div>
+    <div className={styles.container}>
+      <Row style={{ marginBottom: 16 }}>
+        <Col span={16}>
+          <Title level={4} style={{ marginTop: 0 }}>
+            Accounts
+          </Title>
+        </Col>
+        <Col span={8} style={{ textAlign: 'right' }}>
+          <Button
+            icon={<PlusOutlined />}
+            title="Create new account"
+            onClick={() => {
+              history.push('/create')
+            }}
+          ></Button>
+        </Col>
+      </Row>
+      <div style={{ marginTop: 60, textAlign: 'center' }}>
+        <Typography.Text>
+          You currently do not have any accounts. Create your first account to
+          get started.
+        </Typography.Text>
       </div>
-    </PageContainer>
+    </div>
   )
 }
 

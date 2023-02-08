@@ -7,17 +7,22 @@ export default defineConfig({
       redirect: '/home',
     },
     {
-      name: '首页',
+      name: 'Home',
       path: '/home',
       component: './Home',
     },
     {
-      name: '权限演示',
+      name: 'Create',
+      path: '/create',
+      component: './Create',
+    },
+    {
+      name: 'Access',
       path: '/access',
       component: './Access',
     },
     {
-      name: ' CRUD 示例',
+      name: ' CRUD Example',
       path: '/table',
       component: './Table',
     },
