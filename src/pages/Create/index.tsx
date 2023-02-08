@@ -169,6 +169,7 @@ const CreatePage: React.FC = () => {
               initialValues={{ network: 78 }}
               onFinish={onFinish}
               onFinishFailed={onFinishFailed}
+              autoCorrect="off"
               autoComplete="off"
               layout="vertical"
             >
