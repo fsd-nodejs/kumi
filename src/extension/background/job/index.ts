@@ -1,4 +1,5 @@
-import KeepAliveJob from './keep-alive-job'
+import BalanceRefreshJob from './balance.refresh.job'
+import KeepAliveJob from './keep.alive.job'
 
 export interface JobProps {
   name: string
@@ -6,7 +7,7 @@ export interface JobProps {
   callback: (alarmInfo: chrome.alarms.AlarmCreateInfo) => Promise<void>
 }
 
-const jobs = [KeepAliveJob]
+const jobs = [KeepAliveJob, BalanceRefreshJob]
 
 const Job = {
   async startAllJobs() {

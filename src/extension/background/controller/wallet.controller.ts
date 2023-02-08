@@ -1,12 +1,10 @@
 import { mnemonicValidate } from '@polkadot/util-crypto'
 import assert from 'assert'
 
-// import BalanceService from '../service/balance.service'
+import BalanceService from '../service/balance.service'
 import KeyringService from '../service/keyring.service'
 import WalletService from '../service/wallet.service'
 import { KoaContext } from './../koa-ts/lib/context'
-
-// import BalanceController from './balance.controller'
 
 const WalletController = {
   async wallet_createSeed(ctx: KoaContext<[{ seed?: string }]>) {
@@ -48,15 +46,27 @@ const WalletController = {
       address: account.address,
     })
 
+    const wallet = await WalletService.getWalletById(accountId)
+    if (wallet) {
+      await BalanceService.refreshBalance(wallet)
+    }
+
     return ctx.pushResponse({ accountId })
   },
 
   async wallet_queryAllAccount(ctx: KoaContext) {
     const accounts = await WalletService.queryAllAccount()
-    // const [account] = accounts
-    // const result = await BalanceService.queryByAddress(account.address)
-    // console.log('test', result)
-    return ctx.pushResponse(accounts)
+
+    const accountsWithBalance = await Promise.all(
+      accounts.map(async (account) => {
+        const balance = await BalanceService.queryByAddressFromCache(
+          account.address,
+        )
+        return { ...account, balance }
+      }),
+    )
+
+    return ctx.pushResponse(accountsWithBalance)
   },
 }
 

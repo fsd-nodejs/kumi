@@ -41,6 +41,13 @@ const WalletService = {
     return accountId
   },
 
+  async getWalletById(id: number) {
+    return WalletModel.wallets.where('id').equals(id).first()
+  },
+  async getWalletByAddress(address: string) {
+    return WalletModel.wallets.where('address').equals(address).first()
+  },
+
   async queryAllAccount() {
     const accounts = await (await WalletModel.wallets.toArray()).reverse()
     return accounts

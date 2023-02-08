@@ -1,3 +1,4 @@
+import { WsProvider } from '@polkadot/api'
 import keyring from '@polkadot/ui-keyring'
 import { cryptoWaitReady } from '@polkadot/util-crypto'
 
@@ -10,6 +11,7 @@ import RouterMiddleware from './middleware/router.middleware'
 import RpcResponseMiddleware from './middleware/rpc.response.middleware'
 
 export const app = new Koa()
+export let wsProvider: WsProvider
 
 const middleware = [
   ErrorHandleMiddleware,
@@ -29,6 +31,8 @@ export const server = createServer({
   },
   beforeStart: async () => {
     await Job.startAllJobs()
+
+    wsProvider = new WsProvider('wss://ws.calamari.seabird.systems')
 
     // initial setup
     cryptoWaitReady()

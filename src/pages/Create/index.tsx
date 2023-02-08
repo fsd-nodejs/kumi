@@ -41,6 +41,7 @@ const { Title, Paragraph, Text } = Typography
 const CreatePage: FC = () => {
   const [isEnable, setIsEnable] = useState(false)
   const [current, setCurrent] = useState(1)
+  const [submitLoading, setSubmitLoading] = useState(false)
 
   const location = useLocation()
 
@@ -89,6 +90,7 @@ const CreatePage: FC = () => {
 
   const onFinish = async (values: FormFields) => {
     try {
+      setSubmitLoading(true)
       const result = await rpcClient.sendRequest({
         method: 'wallet_createAccount',
         params: [
@@ -100,12 +102,14 @@ const CreatePage: FC = () => {
           },
         ],
       })
+      setSubmitLoading(false)
       if (result) {
         message.success('Create Account Success')
         history.replace('/home')
         return
       }
     } catch (error: any) {
+      setSubmitLoading(false)
       message.error(error?.message)
     }
   }
@@ -313,6 +317,7 @@ const CreatePage: FC = () => {
                       htmlType="submit"
                       type="primary"
                       style={{ width: '100%' }}
+                      loading={submitLoading}
                     >
                       Add the account
                     </Button>

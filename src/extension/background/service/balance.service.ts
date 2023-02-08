@@ -1,16 +1,40 @@
-import { ApiPromise, WsProvider } from '@polkadot/api'
+import { ApiPromise } from '@polkadot/api'
+
+import { wsProvider } from '../bootstrap'
+import BalanceModel, { Balance } from '../model/balance.model'
+import { Wallet } from '../model/wallet.model'
+import { TokenMap } from './../model/balance.model'
 
 const BalanceService = {
+  async queryByAddressFromCache(address: string) {
+    return BalanceModel.balances.where('address').equals(address).first()
+  },
   async queryByAddress(address: string) {
-    const wsProvider = new WsProvider('wss://ws.calamari.seabird.systems')
     const api = await ApiPromise.create({ provider: wsProvider })
+    const { data: balance } = await api.query.system.account(address)
 
-    const now = await api.query.timestamp.now()
+    return balance
+  },
 
-    const { nonce, data: balance } = await api.query.system.account(address)
-    console.log(`${now}: balance of ${balance.free} and a nonce of ${nonce}`)
+  async refreshBalance(wallet: Wallet) {
+    const balance = await this.queryByAddress(wallet.address)
 
-    return address
+    const existed = await BalanceModel.balances
+      .where('address')
+      .equals(wallet.address)
+      .first()
+    const params: Balance = {
+      walletId: wallet.walletId,
+      address: wallet.address,
+      balance: `${balance.free}`,
+      decimals: TokenMap.KMA.decimals,
+      symbol: TokenMap.KMA.symbol,
+    }
+    if (existed) {
+      params.id = existed.id
+    }
+    const updated = await BalanceModel.balances.put(params)
+    return updated
   },
 }
 
