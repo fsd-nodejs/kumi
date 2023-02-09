@@ -1,9 +1,4 @@
-import {
-  PlusOutlined,
-  ReloadOutlined,
-  EditOutlined,
-  DeleteTwoTone,
-} from '@ant-design/icons'
+import { PlusOutlined, ReloadOutlined, DeleteTwoTone } from '@ant-design/icons'
 import { history } from '@umijs/max'
 import { useRequest } from 'ahooks'
 import {
@@ -22,6 +17,8 @@ import * as Mathjs from 'mathjs'
 import Numeral from 'numeral'
 
 import { rpcClient } from '@/services/rpc-client'
+
+import { ReactComponent as SendIcon } from '@/assets/send.svg'
 
 import { AccountInfo } from '@/components/AccountInfo'
 
@@ -134,7 +131,7 @@ const HomePage: React.FC = () => {
                       }
                     }}
                   />,
-                  <EditOutlined key="edit" />,
+                  <SendIcon key="send" fontSize={12} />,
                   <Popconfirm
                     key="delete"
                     title="Forget account"
