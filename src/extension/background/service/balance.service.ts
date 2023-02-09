@@ -4,6 +4,7 @@ import { wsProvider } from '../bootstrap'
 import BalanceModel, { Balance } from '../model/balance.model'
 import { Wallet } from '../model/wallet.model'
 import { TokenMap } from './../model/balance.model'
+import WalletService from './wallet.service'
 
 const BalanceService = {
   async queryByAddressFromCache(address: string) {
@@ -39,6 +40,17 @@ const BalanceService = {
 
   async deleteBalance(address: string) {
     return BalanceModel.balances.where('address').equals(address).delete()
+  },
+
+  async refreshTransactionBalance(sender: string, recipient: string) {
+    const senderAccount = await WalletService.getWalletByAddress(sender)
+    const recipientAccount = await WalletService.getWalletByAddress(recipient)
+    if (senderAccount) {
+      await this.refreshBalance(senderAccount)
+    }
+    if (recipientAccount) {
+      await this.refreshBalance(recipientAccount)
+    }
   },
 }
 

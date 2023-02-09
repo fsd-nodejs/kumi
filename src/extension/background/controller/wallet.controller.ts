@@ -48,7 +48,7 @@ const WalletController = {
 
     const wallet = await WalletService.getWalletById(accountId)
     if (wallet) {
-      BalanceService.refreshBalance(wallet)
+      await BalanceService.refreshBalance(wallet)
     }
 
     return ctx.pushResponse({ accountId })

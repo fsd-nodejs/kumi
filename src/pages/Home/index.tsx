@@ -1,4 +1,8 @@
-import { PlusOutlined, ReloadOutlined, DeleteTwoTone } from '@ant-design/icons'
+import Icon, {
+  PlusOutlined,
+  ReloadOutlined,
+  DeleteTwoTone,
+} from '@ant-design/icons'
 import { history } from '@umijs/max'
 import { useRequest } from 'ahooks'
 import {
@@ -13,8 +17,8 @@ import {
   Popconfirm,
   message,
 } from 'antd'
-import * as Mathjs from 'mathjs'
-import Numeral from 'numeral'
+
+import { formatBalance } from '@/utils/format'
 
 import { rpcClient } from '@/services/rpc-client'
 
@@ -42,19 +46,6 @@ const headerMenuItems: MenuProps['items'] = [
     },
   },
 ]
-
-const formatBalance = ({
-  balance,
-  decimals,
-}: {
-  balance: string
-  decimals: number
-}) => {
-  const formatted = Mathjs.bignumber(balance).div(
-    Mathjs.bignumber(10).pow(decimals),
-  )
-  return Numeral(formatted.toString()).format('0,0.0000')
-}
 
 const HomePage: React.FC = () => {
   const {
@@ -131,7 +122,17 @@ const HomePage: React.FC = () => {
                       }
                     }}
                   />,
-                  <SendIcon key="send" fontSize={12} />,
+                  <Icon
+                    key="send"
+                    component={SendIcon}
+                    onClick={() => {
+                      console.log('test click')
+                      history.push(`/send`, {
+                        sender: account.address,
+                      })
+                    }}
+                  />,
+
                   <Popconfirm
                     key="delete"
                     title="Forget account"

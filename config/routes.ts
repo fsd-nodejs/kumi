@@ -17,6 +17,11 @@ export default defineConfig({
       component: './Create',
     },
     {
+      name: 'Send',
+      path: '/send',
+      component: './Send',
+    },
+    {
       name: 'Access',
       path: '/access',
       component: './Access',
