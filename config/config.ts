@@ -35,10 +35,6 @@ export default defineConfig({
   jsMinifierOptions: {
     keepNames: true,
   },
-  codeSplitting: {
-    jsStrategy: 'depPerChunk',
-    jsStrategyOptions: {},
-  },
   polyfill: {
     imports: ['core-js/stable'],
   },
