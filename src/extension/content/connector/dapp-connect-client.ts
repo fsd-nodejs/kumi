@@ -67,7 +67,6 @@ export class DappConnectClient extends SafeEventEmitter {
       }
     })
     this.rpcClient.on('dapp_pong', () => {
-      console.log('test dapp_pong')
       this.rpcClient.sendRequest({
         method: 'dapp_ping',
       })
@@ -101,7 +100,7 @@ export class DappConnectClient extends SafeEventEmitter {
     return this.session?.accounts ?? []
   }
 
-  async disconnect(): Promise<void> {
+  async disconnect() {
     if (this.session) {
       this.session = {
         approved: false,

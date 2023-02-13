@@ -27,10 +27,15 @@ export const aptosAutoPopupMethos = [
   'aptos_createCollection',
   'aptos_createToken',
 ]
+
+export const polkadotAutoPopupMethos = ['pub(extrinsic.sign)']
+
 export const dappAutoPopupMethods = [
   ...allSigningMethods,
   ...aptosAutoPopupMethos,
+  ...polkadotAutoPopupMethos,
 ]
+
 export const dappAllowMethods = [
   ...dappAutoPopupMethods,
   ...aptosAutoPopupMethos,
@@ -52,6 +57,15 @@ export const dappAllowMethods = [
   'aptos_getTransactionByHash',
   'aptos_getAccountTransactions',
   'aptos_getAccountResources',
+
+  // polkadot
+  'pub(accounts.list)',
+  'pub(metadata.list)',
+  'pub(metadata.provide)',
+  'pub(rpc.listProviders)',
+  'pub(extrinsic.sign)',
+  'pub(bytes.sign)',
+  'pub(authorize.tab)',
 ]
 
 export const ETH_EVENT_LOG_SIGNATURE = {

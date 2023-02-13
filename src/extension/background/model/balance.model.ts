@@ -15,6 +15,10 @@ export const TokenMap = {
     decimals: 12,
     symbol: 'KMA',
   },
+  DOL: {
+    decimals: 10,
+    symbol: 'DOL',
+  },
 }
 
 class BalanceModelDB extends Dexie {

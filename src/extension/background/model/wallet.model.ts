@@ -15,6 +15,7 @@ export interface Wallet {
   address: string
   network: number
   createTime: number
+  accountIndex?: string
 }
 
 class WalletModelDB extends Dexie {

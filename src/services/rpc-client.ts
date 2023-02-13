@@ -20,13 +20,13 @@ import { DappTransport } from '@/extension/content/connector/dapp-transport'
 
 import type { ChromeConnectPortJSON, IJsonRpcResponse } from '@/extension'
 
-interface SendRequestProps<T extends IRouters> {
+export interface SendRequestProps<T extends IRouters> {
   method: T
   params?: GetParameters<T>
   id?: number
 }
 
-interface SendOptionProps {
+export interface SendOptionProps {
   timeout?: number
 }
 

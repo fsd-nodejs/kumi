@@ -5,6 +5,7 @@ import { cryptoWaitReady } from '@polkadot/util-crypto'
 import { createServer } from './app/server'
 import Job from './job'
 import Koa from './koa-ts'
+import DappRequestMiddleware from './middleware/dapp.request.middleware'
 import ErrorHandleMiddleware from './middleware/error.handle.middleware'
 import RespondMiddleware from './middleware/respond.middleware'
 import RouterMiddleware from './middleware/router.middleware'
@@ -16,6 +17,7 @@ export let wsProvider: WsProvider
 const middleware = [
   ErrorHandleMiddleware,
   RespondMiddleware, // do not change this middleware position
+  DappRequestMiddleware, // do not change this middleware position
   RpcResponseMiddleware,
   RouterMiddleware, // do not change this middleware position
 ]
