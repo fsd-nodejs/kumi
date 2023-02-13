@@ -5,7 +5,7 @@ import SafeEventEmitter from '@/extension/background/utils/safe-event-emitter'
 import { DappConnectClient } from '../connector/dapp-connect-client'
 import Accounts from './accounts'
 import Metadata from './metadata'
-import PostMessageProvider from './post-message-provider'
+import PostMessageProvider from './post.message.provider'
 import Signer from './signer'
 
 export class PolkadotProvider extends SafeEventEmitter implements Injected {
