@@ -1,6 +1,8 @@
 import assert from 'assert'
 
 import type { KoaContext, Session } from '../koa-ts'
+import PopupRequestService from '../service/popup.request.service'
+import WalletService from '../service/wallet.service'
 
 type SessionSet = Map<string, Session>
 
@@ -10,8 +12,15 @@ interface ISubscription<T> {
 }
 
 const Subscriptions: Record<string, ISubscription<unknown>> = {
-  'popup.walletSession': {
-    data: async function () {},
+  'popup.uiRequestQueue': {
+    data: async function () {
+      return PopupRequestService.getAllPendingRequests()
+    },
+  },
+  'popup.wallets': {
+    data: async function () {
+      return WalletService.queryAllAccount()
+    },
   },
 }
 

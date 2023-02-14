@@ -1,8 +1,10 @@
 import { SignerResult } from '@polkadot/api/types'
 import { InjectedAccount, MetadataDef } from '@polkadot/extension-inject/types'
 import type { SignerPayloadJSON, SignerPayloadRaw } from '@polkadot/types/types'
+import assert from 'assert'
 
 import { KoaContext } from '../koa-ts'
+import KeyringService from '../service/keyring.service'
 import WalletService from '../service/wallet.service'
 
 const PubController = {
@@ -37,8 +39,20 @@ const PubController = {
   async 'pub(rpc.listProviders)'(ctx: KoaContext) {
     return ctx.pushResponse({})
   },
-  async 'pub(extrinsic.sign)'(ctx: KoaContext<[SignerPayloadJSON]>) {
-    console.log('test', ctx.params[0])
+  async 'pub(extrinsic.sign)'(
+    ctx: KoaContext<[SignerPayloadJSON, { password: string; sender: string }]>,
+  ) {
+    console.log('test sign', ctx.params[0], ctx.params[1])
+    const payload = ctx.params[0]
+    console.log('test payload', payload)
+    const { sender, password } = ctx.params[1]
+
+    const account = await WalletService.getWalletByAddress(sender)
+    assert(account, 'Account not found')
+
+    const seed = await KeyringService.getMnemonic(password, account.keyringId)
+    assert(seed, 'Password not correct!')
+
     const result: SignerResult = {
       id: 0,
       signature: '0x23',
