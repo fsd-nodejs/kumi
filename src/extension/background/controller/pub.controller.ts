@@ -1,13 +1,11 @@
-import { ApiPromise } from '@polkadot/api'
-import { Keyring } from '@polkadot/api'
 import { SignerResult } from '@polkadot/api/types'
 import { InjectedAccount, MetadataDef } from '@polkadot/extension-inject/types'
 import type { SignerPayloadJSON, SignerPayloadRaw } from '@polkadot/types/types'
 import assert from 'assert'
 
-import { wsProvider } from '../bootstrap'
 import { KoaContext } from '../koa-ts'
 import KeyringService from '../service/keyring.service'
+import PolkadotService from '../service/polkadot.service'
 import PopupRequestService from '../service/popup.request.service'
 import WalletService from '../service/wallet.service'
 
@@ -55,15 +53,7 @@ const PubController = {
     const seed = await KeyringService.getMnemonic(password, account.keyringId)
     assert(seed, 'Password not correct!')
 
-    const api = await ApiPromise.create({ provider: wsProvider }) // const txU8a = txPayload.toU8a()
-
-    const keyring = new Keyring({ type: 'sr25519' })
-    const pair = keyring.createFromUri(seed)
-    const signed = await api.registry
-      .createType('ExtrinsicPayload', payload, {
-        version: payload.version,
-      })
-      .sign(pair)
+    const signed = await PolkadotService.signPayload(payload, seed)
 
     const result: SignerResult = {
       id: ctx.id,
