@@ -42,7 +42,7 @@ export const server = createServer({
         console.log('crypto initialized')
 
         // load all the keyring data// load all the keyring data
-        keyring.loadAll({ ss58Format: 78, type: 'sr25519' })
+        keyring.loadAll({ type: 'sr25519', ss58Format: 78 })
 
         console.log('initialization completed')
       })

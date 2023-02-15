@@ -1,9 +1,8 @@
 import { ApiPromise } from '@polkadot/api'
+import { Keyring } from '@polkadot/api'
 import { SignerResult } from '@polkadot/api/types'
 import { InjectedAccount, MetadataDef } from '@polkadot/extension-inject/types'
 import type { SignerPayloadJSON, SignerPayloadRaw } from '@polkadot/types/types'
-import keyring from '@polkadot/ui-keyring'
-import { u8aToHex } from '@polkadot/util'
 import assert from 'assert'
 
 import { wsProvider } from '../bootstrap'
@@ -48,29 +47,27 @@ const PubController = {
     ctx: KoaContext<[SignerPayloadJSON, { password: string; sender: string }]>,
   ) {
     const payload = ctx.params[0]
-    const { sender, password } = ctx.params[1]
+    const { password } = ctx.params[1]
 
-    const account = await WalletService.getWalletByAddress(sender)
+    const account = await WalletService.getWalletByAddress(payload.address)
     assert(account, 'Account not found')
 
     const seed = await KeyringService.getMnemonic(password, account.keyringId)
     assert(seed, 'Password not correct!')
 
-    const api = await ApiPromise.create({ provider: wsProvider })
+    const api = await ApiPromise.create({ provider: wsProvider }) // const txU8a = txPayload.toU8a()
 
-    const txPayload = api.createType('ExtrinsicPayload', payload, {
-      version: payload.version,
-    })
-
-    const txU8a = txPayload.toU8a()
-
+    const keyring = new Keyring({ type: 'sr25519' })
     const pair = keyring.createFromUri(seed)
-    const signature = pair.sign(txU8a, { withType: true })
-    const sigHex = u8aToHex(signature)
+    const signed = await api.registry
+      .createType('ExtrinsicPayload', payload, {
+        version: payload.version,
+      })
+      .sign(pair)
 
     const result: SignerResult = {
       id: ctx.id,
-      signature: sigHex,
+      signature: signed.signature,
     }
 
     await PopupRequestService.tryAddResponseToDapp(ctx, { result })
