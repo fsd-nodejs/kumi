@@ -39,6 +39,8 @@ export const dappAutoPopupMethods = [
 export const dappAllowMethods = [
   ...dappAutoPopupMethods,
   ...aptosAutoPopupMethos,
+  'subscribe_register',
+  'subscribe_remove',
   'dapp_ping',
   'dc_sessionRequest',
   'dc_sessionUpdate',

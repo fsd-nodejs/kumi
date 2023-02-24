@@ -73,11 +73,26 @@ const PubController = {
     return ctx.pushResponse(result)
   },
   async 'pub(authorize.tab)'(ctx: KoaContext<[{ origin: string }]>) {
-    console.log('test', ctx.params[0])
     return ctx.pushResponse({
       authorizedAccounts: [],
       result: false,
     })
+  },
+
+  async 'pub(accounts.subscribe)'(ctx: KoaContext) {
+    const accounts = await WalletService.queryAllAccount()
+
+    const result: InjectedAccount[] = accounts.map((account) => {
+      return {
+        address: account.address,
+        name: account.name,
+        genesisHash:
+          '0x2ae061f08422b6503b8aa5f401242a209999669c3b8945f814dc096fb1a977bd',
+        type: 'sr25519',
+      }
+    })
+
+    return ctx.pushResponse(result)
   },
 }
 

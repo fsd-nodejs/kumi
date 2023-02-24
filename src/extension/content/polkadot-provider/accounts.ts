@@ -1,5 +1,6 @@
 // Copyright 2019-2023 @polkadot/extension authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+import { IJsonRpcRequest } from '@deficonnect/types'
 import type {
   InjectedAccount,
   InjectedAccounts,
@@ -23,15 +24,33 @@ export default class Accounts implements InjectedAccounts {
     })
   }
 
-  public subscribe(): Unsubcall {
-    // let id: string | null = null
+  public subscribe(cb: (accounts: InjectedAccount[]) => unknown): Unsubcall {
+    // let id: string | null = null;
+    console.log('test bb')
+    const callback = (request: IJsonRpcRequest) => {
+      console.log('test aa')
+      if (request.params[0].path !== 'pub(accounts.subscribe)') {
+        return
+      }
+      cb(request.params[0].data)
+    }
+    rpcClient.on('subscribe_update', callback)
+    rpcClient
+      .sendRequest({
+        method: 'subscribe_register',
+        params: [
+          {
+            path: 'pub(accounts.subscribe)',
+          },
+        ],
+      })
+      .catch(() => {
+        // ignore
+        return undefined
+      })
 
-    // sendRequest('pub(accounts.subscribe)', null, cb)
-    //   .then((subId): void => {
-    //     id = subId
-    //   })
-    //   .catch(console.error)
-
-    return (): void => {}
+    return (): void => {
+      rpcClient.removeListener('subscribe_update', cb)
+    }
   }
 }

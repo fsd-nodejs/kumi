@@ -9,7 +9,7 @@ declare global {
     deficonnectProvider?: Provider
     deficonnect: { ethereum?: Provider }
     injectedWeb3: {
-      'crypto-js': {
+      'polkadot-js': {
         version: string
         enable: (originName: string) => Promise<Injected>
       }
@@ -39,7 +39,7 @@ export async function enable(origin: string): Promise<Injected> {
 window.injectedWeb3 = {
   // this is the name for this extension, there could be multiples injected,
   // each with their own keys, here `polkadot-js` is for this extension
-  'crypto-js': {
+  'polkadot-js': {
     // semver for the package
     version: '0.1.0',
 
