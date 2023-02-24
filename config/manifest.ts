@@ -28,7 +28,7 @@ export default {
       '512': 'icon-512.png',
     },
   },
-  permissions: ['alarms'],
+  permissions: ['alarms', 'storage'],
   host_permissions: ['<all_urls>'],
   content_scripts: [
     {
@@ -58,4 +58,7 @@ export default {
       matches: ['<all_urls>'],
     },
   ],
+  content_security_policy: {
+    extension_pages: "script-src 'self' 'wasm-unsafe-eval'; object-src 'self';",
+  },
 }

@@ -5,6 +5,9 @@ import {
   payloadId,
 } from '@walletconnect/utils'
 
+import { SendRequestProps } from '@/services/rpc-client'
+
+import { GetResponseType, IRouters } from '@/extension/background/router'
 import SafeEventEmitter from '@/extension/background/utils/safe-event-emitter'
 
 import type { IJsonRpcResponse } from '../..'
@@ -33,11 +36,9 @@ export class DappRpcClient extends SafeEventEmitter {
       }
     })
   }
-  sendRequest<T = any>(request: {
-    method: string
-    params?: any[]
-    id?: number
-  }): Promise<T> {
+  sendRequest<T extends IRouters>(
+    request: SendRequestProps<T>,
+  ): Promise<GetResponseType<T>> {
     const { method, params = [], id } = request
     const koaMsg: KoaMessage = {
       from: location.origin,

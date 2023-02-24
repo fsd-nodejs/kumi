@@ -1,9 +1,9 @@
 import { defineConfig } from '@umijs/max'
-// import fs from 'fs'
+import fs from 'fs'
 import GenerateJsonPlugin from 'generate-json-webpack-plugin'
+import path from 'path'
+import type { Compiler } from 'webpack'
 
-// import path from 'path'
-// import type { Compiler } from 'webpack'
 import manifest from './manifest'
 import routes from './routes'
 
@@ -35,10 +35,6 @@ export default defineConfig({
   jsMinifierOptions: {
     keepNames: true,
   },
-  codeSplitting: {
-    jsStrategy: 'depPerChunk',
-    jsStrategyOptions: {},
-  },
   polyfill: {
     imports: ['core-js/stable'],
   },
@@ -52,6 +48,21 @@ export default defineConfig({
       memo.devServer.hot(false)
       memo.plugins.delete('hmr')
     }
+
+    memo.plugin('fixCSP').use(
+      class {
+        apply(compiler: Compiler) {
+          compiler.hooks.done.tap('fixCSP', () => {
+            const htmlPath = path.resolve(__dirname, '../dist/index.html')
+            const html = fs.readFileSync(htmlPath).toString()
+            fs.writeFileSync(
+              htmlPath,
+              html.replace(/<script>\s*.*\s*<\/script>/g, ''),
+            )
+          })
+        }
+      },
+    )
 
     // generate manifest.json, it will auto load version/env
     memo

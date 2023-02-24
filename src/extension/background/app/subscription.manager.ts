@@ -1,6 +1,9 @@
+import { InjectedAccount } from '@polkadot/extension-inject/types'
 import assert from 'assert'
 
 import type { KoaContext, Session } from '../koa-ts'
+import PopupRequestService from '../service/popup.request.service'
+import WalletService from '../service/wallet.service'
 
 type SessionSet = Map<string, Session>
 
@@ -10,8 +13,30 @@ interface ISubscription<T> {
 }
 
 const Subscriptions: Record<string, ISubscription<unknown>> = {
-  'popup.walletSession': {
-    data: async function () {},
+  'popup.uiRequestQueue': {
+    data: async function () {
+      return PopupRequestService.getAllPendingRequests()
+    },
+  },
+  'popup.wallets': {
+    data: async function () {
+      return WalletService.queryAllAccount()
+    },
+  },
+  'pub(accounts.subscribe)': {
+    data: async function () {
+      const accounts = await WalletService.queryAllAccount()
+      const result: InjectedAccount[] = accounts.map((account) => {
+        return {
+          address: account.address,
+          name: account.name,
+          genesisHash:
+            '0x2ae061f08422b6503b8aa5f401242a209999669c3b8945f814dc096fb1a977bd',
+          type: 'sr25519',
+        }
+      })
+      return result
+    },
   },
 }
 

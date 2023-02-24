@@ -12,7 +12,7 @@ const KeepAliveJob: JobProps = {
     const session = SessionManager.getSessionsByRole('dapp').find((s) =>
       s.origin.startsWith('https'),
     )
-    session?.sendMsg({
+    await session?.sendMsg({
       from: 'extension',
       to: session.origin,
       payload: {
@@ -22,6 +22,7 @@ const KeepAliveJob: JobProps = {
         params: [],
       },
     })
+    console.log('Keep alive job done')
   },
 }
 

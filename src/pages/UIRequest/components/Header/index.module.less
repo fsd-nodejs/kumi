@@ -1,0 +1,65 @@
+.container {
+  display: flex;
+  flex-direction: column;
+
+  .wallet {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    height: 32px;
+    background: #f1f6fd;
+
+    .name {
+      margin-left: 15px;
+      overflow: hidden;
+      color: #323c52;
+      font-weight: 500;
+      font-size: 12px;
+      line-height: 16px;
+      white-space: nowrap;
+      text-align: end;
+      text-overflow: ellipsis;
+    }
+
+    .address {
+      margin-right: 15px;
+      color: #a0a9be;
+      font-weight: 500;
+      font-size: 12px;
+      line-height: 16px;
+      text-align: start;
+    }
+  }
+
+  .queue {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    border-bottom: 1px solid #d9e0ea;
+
+    .left {
+      margin-left: 10px;
+      border: none;
+    }
+
+    .disable {
+      opacity: 0.5;
+    }
+
+    .center {
+      color: #000;
+      font-weight: 500;
+      font-size: 16px;
+      font-style: normal;
+      line-height: 24px;
+    }
+
+    .right {
+      margin-right: 10px;
+      border: none;
+    }
+  }
+}

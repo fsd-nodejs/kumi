@@ -1,10 +1,22 @@
+import BalanceController from './controller/balance.controller'
 import DappController from './controller/dapp.controller'
+import DCController from './controller/dc.controller'
 import ExampleController from './controller/example.controller'
+import PubController from './controller/pub.controller'
+import SubscribeController from './controller/subscribe.controller'
+import TransactionController from './controller/transaction.controller'
+import WalletController from './controller/wallet.controller'
 import { KoaContext } from './koa-ts'
 
 const routers = {
   ...ExampleController,
   ...DappController,
+  ...WalletController,
+  ...BalanceController,
+  ...TransactionController,
+  ...PubController,
+  ...SubscribeController,
+  ...DCController,
 }
 
 export type IRouters = keyof typeof routers
